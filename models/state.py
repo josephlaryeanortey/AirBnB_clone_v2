@@ -2,15 +2,16 @@
 """ State Module for HBNB project """
 from models.base_model import BaseModel, Base
 from models.city import City
-from sqlachmy import Column, String
-from sqlachmy.orm import relationship
-from models import storage_type
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
+from os import getenv
+#from models import storage_type
 
 
 class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
-    if storage_type == 'db':
+    if getenv("HBNB_TYPE_STORAGE") == 'db':
         name = Column(String(128), nullable=False)
         cities = relationship('City', backref='state',
                               cascade='delete, all, delete-orphan')
