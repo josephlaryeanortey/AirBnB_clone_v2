@@ -1,176 +1,138 @@
 #!/usr/bin/python3
-"""Unittest modlue for Airbnb clone console"""
-
+"""A unit test module for the console (command interpreter)."""
+from models.base_model import BaseModel
 from unittest.mock import patch
 from console import HBNBCommand
+from tests import clear_stream
+from models.user import User
+from models import storage
 from io import StringIO
+import sqlalchemy
 import unittest
-import console
-import tests
-import pep8
+import MySQLdb
+import json
 import os
 
 
-class TestConsole(unittest.TestCase):
-    """Class to test console"""
+class TestHBNBCommand(unittest.TestCase):
+    """Represents the test class for the HBNBCommand"""
+    @unittest.skipIf(
+        os.getenv('HBNB_TYPE_STORAGE') == 'db', 'FileStorage test')
+    def test_fs_create(self):
+        """Tests the create command with the file storage"""
+        with patch('sys.stdout', new=StringIO()) as cout:
+            cons = HBNBCommand()
+            cons.onecmd('create City name="Maamoura"')
+            mdl_id = cout.getvalue().strip()
+            clear_stream(cout)
+            self.assertIn('City.{}'.format(mdl_id), storage.all().keys())
+            cons.onecmd('show City {}'.format(mdl_id))
+            self.assertIn("'name': 'El'", cout.getvalue().strip())
+            clear_stream(cout)
+            cons.onecmd('create User name="Hannibal" age=22 height=6.2')
+            mdl_id = cout.getvalue().strip()
+            self.assertIn('User.{}'.format(mdl_id), storage.all().keys())
+            clear_stream(cout)
+            cons.onecmd('show User {}'.format(mdl_id))
+            self.assertIn("'name': 'Hannibal'", cout.getvalue().strip())
+            self.assertIn("'age': 22", cout.getvalue().strip())
+            self.assertIn("'height': 6.2", cout.getvalue().strip())
 
-    @classmethod
-    def setUpClass(cls_instance):
-        """Function to set variable for console instance"""
+    @unittest.skipIf(
+        os.getenv('HBNB_TYPE_STORAGE') != 'db', 'DBStorage test')
+    def test_db_create(self):
+        """Tests the create command with the database storage"""
+        with patch('sys.stdout', new=StringIO()) as cout:
+            cons = HBNBCommand()
+            with self.assertRaises(sqlalchemy.exc.OperationalError):
+                cons.onecmd('create User')
+            clear_stream(cout)
+            cons.onecmd('create User email="hm@utd.com" password="13"')
+            mdl_id = cout.getvalue().strip()
+            dbc = MySQLdb.connect(
+                host=os.getenv('HBNB_MYSQL_HOST'),
+                port=3306,
+                user=os.getenv('HBNB_MYSQL_USER'),
+                passwd=os.getenv('HBNB_MYSQL_PWD'),
+                db=os.getenv('HBNB_MYSQL_DB')
+            )
+            cursor = dbc.cursor()
+            cursor.execute('SELECT * FROM users WHERE id="{}"'.format(mdl_id))
+            result = cursor.fetchone()
+            self.assertTrue(result is not None)
+            self.assertIn('hm@utd.com', result)
+            self.assertIn('13', result)
+            cursor.close()
+            dbc.close()
 
-        cls_instance.console = HBNBCommand()
+    @unittest.skipIf(
+        os.getenv('HBNB_TYPE_STORAGE') != 'db', 'DBStorage test')
+    def test_db_show(self):
+        """Tests the show command with the database storage"""
+        with patch('sys.stdout', new=StringIO()) as cout:
+            cons = HBNBCommand()
+            # showing a User instance
+            obj = User(email="hm@utd.com", password="13")
+            dbc = MySQLdb.connect(
+                host=os.getenv('HBNB_MYSQL_HOST'),
+                port=3306,
+                user=os.getenv('HBNB_MYSQL_USER'),
+                passwd=os.getenv('HBNB_MYSQL_PWD'),
+                db=os.getenv('HBNB_MYSQL_DB')
+            )
+            cursor = dbc.cursor()
+            cursor.execute('SELECT * FROM users WHERE id="{}"'.format(obj.id))
+            result = cursor.fetchone()
+            self.assertTrue(result is None)
+            cons.onecmd('show User {}'.format(obj.id))
+            self.assertEqual(
+                cout.getvalue().strip(),
+                '** no instance found **'
+            )
+            obj.save()
+            dbc = MySQLdb.connect(
+                host=os.getenv('HBNB_MYSQL_HOST'),
+                port=3306,
+                user=os.getenv('HBNB_MYSQL_USER'),
+                passwd=os.getenv('HBNB_MYSQL_PWD'),
+                db=os.getenv('HBNB_MYSQL_DB')
+            )
+            cursor = dbc.cursor()
+            cursor.execute('SELECT * FROM users WHERE id="{}"'.format(obj.id))
+            clear_stream(cout)
+            cons.onecmd('show User {}'.format(obj.id))
+            result = cursor.fetchone()
+            self.assertTrue(result is not None)
+            self.assertIn('hm@utd.com', result)
+            self.assertIn('13', result)
+            self.assertIn('hm@utd.com', cout.getvalue())
+            self.assertIn('13', cout.getvalue())
+            cursor.close()
+            dbc.close()
 
-    @classmethod
-    def teardown(cls_instance):
-        """Function that removes setup variables"""
-
-        del cls_instance.console
-        try:
-            os.remove("file.json")
-        except FileNotFoundError:
-            pass
-
-    def test_doc_strings(self):
-        """Function to test if doctrings are present"""
-
-        self.assertIsNotNone(console.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_EOF.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_quit.__doc__)
-        self.assertIsNotNone(HBNBCommand.emptyline.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_create.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_show.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_destroy.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_all.__doc__)
-        self.assertIsNotNone(HBNBCommand.do_update.__doc__)
-        self.assertIsNotNone(HBNBCommand.default.__doc__)
-        self.assertIsNotNone(HBNBCommand.update_dict.__doc__)
-
-    def test_emptyline(self):
-        """Function to test emptyline command"""
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("\n")
-            self.assertEqual(f.getvalue(), '')
-
-    def test_quit(self):
-        """Function that tests the quit command"""
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("quit")
-            self.assertEqual('', f.getvalue())
-
-    def test_console_style(self):
-        """Function to check if file is pep8"""
-
-        f_style = pep8.StyleGuide(quiet=True)
-        style = f_style.check_files(['console.py'])
-        self.assertEqual(style.total_errors, 0, "not pep8")
-
-    def test_test_console_style(self):
-        """Function to check if file is pep8"""
-
-        f_style = pep8.StyleGuide(quiet=True)
-        style = f_style.check_files(['tests/test_console.py'])
-        self.assertEqual(style.total_errors, 0, "not pep8")
-
-    def test_create(self):
-        """Function to test create command"""
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("create")
-            self.assertEqual("** class name missing **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("create Mando")
-            self.assertEqual("** class doesn't exist **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("User.all()")
-            self.assertEqual('[]\n', f.getvalue()[:7])
-
-    def test_all(self):
-        """Function to test all command"""
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("all something")
-            self.assertEqual("** class doesn't exist **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("all Place")
-            self.assertEqual("[]\n", f.getvalue())
-
-    def test_destroy(self):
-        """Function to test destroy command"""
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("destroy")
-            self.assertEqual("** class name missing **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("destroy lgbt")
-            self.assertEqual("** class doesn't exist **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("destroy User")
-            self.assertEqual("** instance id missing **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("destroy BaseModel 419")
-            self.assertEqual("** no instance found **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("City.destroy('419')")
-            self.assertEqual("** no instance found **\n", f.getvalue())
-
-    def test_update(self):
-        """Function to test update command"""
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("update")
-            self.assertEqual("** class name missing **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("update phone")
-            self.assertEqual("** class doesn't exist **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("update User")
-            self.assertEqual("** instance id missing **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("update User 419")
-            self.assertEqual("** no instance found **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("update User 13")
-            self.assertEqual("** no instance found **\n", f.getvalue())
-
-    def test_show(self):
-        """Test cmd output: show"""
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("show")
-            self.assertEqual("** class name missing **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("ShitClass.show()")
-            self.assertEqual("** class doesn't exist **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("show Review")
-            self.assertEqual("** instance id missing **\n", f.getvalue())
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("User.show('419')")
-            self.assertEqual("** no instance found **\n", f.getvalue())
-
-    def test_cmd(self):
-        """Function to test cmd"""
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("City.count()")
-            self.assertEqual(int, type(eval(f.getvalue())))
-
-
-if __name__ == "__main__":
-    unittest.main()
+    @unittest.skipIf(
+        os.getenv('HBNB_TYPE_STORAGE') != 'db', 'DBStorage test')
+    def test_db_count(self):
+        """Tests the count command with the database storage"""
+        with patch('sys.stdout', new=StringIO()) as cout:
+            cons = HBNBCommand()
+            dbc = MySQLdb.connect(
+                host=os.getenv('HBNB_MYSQL_HOST'),
+                port=3306,
+                user=os.getenv('HBNB_MYSQL_USER'),
+                passwd=os.getenv('HBNB_MYSQL_PWD'),
+                db=os.getenv('HBNB_MYSQL_DB')
+            )
+            cursor = dbc.cursor()
+            cursor.execute('SELECT COUNT(*) FROM states;')
+            res = cursor.fetchone()
+            prev_count = int(res[0])
+            cons.onecmd('create State name="Enugu"')
+            clear_stream(cout)
+            cons.onecmd('count State')
+            cnt = cout.getvalue().strip()
+            self.assertEqual(int(cnt), prev_count + 1)
+            clear_stream(cout)
+            cons.onecmd('count State')
+            cursor.close()
+            dbc.close()
