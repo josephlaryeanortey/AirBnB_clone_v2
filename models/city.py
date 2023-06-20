@@ -3,7 +3,6 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey
 from os import getenv
-#from models import storage_type
 
 
 class City(BaseModel, Base):

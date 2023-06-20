@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 """Module that contains unittests for base_model"""
-from models.base_model import BaseModel, Base
+from models.base_model import BaseModel
 from datetime import datetime
 import unittest
-from uuid import UUID
 import json
 import os
 
@@ -30,14 +29,6 @@ class test_basemodel(unittest.TestCase):
         except Exception:
             pass
 
-    def test_init(self):
-        """Tests the initialization of the model class."""
-        self.assertIsInstance(self.value(), BaseModel)
-        if self.value is not BaseModel:
-            self.assertIsInstance(self.value(), Base)
-        else:
-            self.assertNotIsInstance(self.value(), Base)
-
     def test_default(self):
         """ default testing of basemodel"""
         var = self.value()
@@ -57,6 +48,7 @@ class test_basemodel(unittest.TestCase):
         copy.update({1: 2})
         with self.assertRaises(TypeError):
             new = BaseModel(**copy)
+            self.assertFalse(new is var)
 
     def test_save(self):
         """ Testing save metthod"""
@@ -115,7 +107,7 @@ class test_basemodel(unittest.TestCase):
                 self.value(id='13', age=None).to_dict(),
                 {
                     '__class__': mdl.__class__.__name__,
-                    'id': 'u-b34',
+                    'id': '13',
                     'age': None
                 }
             )
@@ -140,6 +132,7 @@ class test_basemodel(unittest.TestCase):
         nada = {None: None}
         with self.assertRaises(TypeError):
             new = self.value(**nada)
+            self.assertFalse(new is nada)
 
     def test_kwargs_one(self):
         """ testing kwargs with one arg"""

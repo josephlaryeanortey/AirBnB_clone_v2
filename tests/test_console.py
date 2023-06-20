@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """A unit test module for the console (command interpreter)."""
-from models.base_model import BaseModel
 from unittest.mock import patch
 from console import HBNBCommand
 from tests import clear_stream
@@ -10,7 +9,6 @@ from io import StringIO
 import sqlalchemy
 import unittest
 import MySQLdb
-import json
 import os
 
 
@@ -27,7 +25,7 @@ class TestHBNBCommand(unittest.TestCase):
             clear_stream(cout)
             self.assertIn('City.{}'.format(mdl_id), storage.all().keys())
             cons.onecmd('show City {}'.format(mdl_id))
-            self.assertIn("'name': 'El'", cout.getvalue().strip())
+            self.assertIn("'name': 'Maamoura'", cout.getvalue().strip())
             clear_stream(cout)
             cons.onecmd('create User name="Hannibal" age=22 height=6.2')
             mdl_id = cout.getvalue().strip()
@@ -47,7 +45,8 @@ class TestHBNBCommand(unittest.TestCase):
             with self.assertRaises(sqlalchemy.exc.OperationalError):
                 cons.onecmd('create User')
             clear_stream(cout)
-            cons.onecmd('create User email="hm@utd.com" password="13"')
+            cons.onecmd('create User email="hm@utd.com" password="13" \
+                        first_name="Hannibal" last_name="Mejbri"')
             mdl_id = cout.getvalue().strip()
             dbc = MySQLdb.connect(
                 host=os.getenv('HBNB_MYSQL_HOST'),
@@ -72,7 +71,8 @@ class TestHBNBCommand(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as cout:
             cons = HBNBCommand()
             # showing a User instance
-            obj = User(email="hm@utd.com", password="13")
+            obj = User(email="hm@utd.com", password="13",
+                       first_name="Hannibal", last_name="Mejbri")
             dbc = MySQLdb.connect(
                 host=os.getenv('HBNB_MYSQL_HOST'),
                 port=3306,
@@ -102,6 +102,7 @@ class TestHBNBCommand(unittest.TestCase):
             clear_stream(cout)
             cons.onecmd('show User {}'.format(obj.id))
             result = cursor.fetchone()
+            print(result)
             self.assertTrue(result is not None)
             self.assertIn('hm@utd.com', result)
             self.assertIn('13', result)

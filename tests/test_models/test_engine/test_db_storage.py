@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """module with unittests for db_storage"""
+from models import storage
 from datetime import datetime
-from models.user import User
 from models.user import User
 import unittest
 import MySQLdb
@@ -73,7 +73,7 @@ class TestDBStorage(unittest.TestCase):
     def test_delete(self):
         """Test for delete method"""
         new = User(
-            email='hm@gutd.com',
+            email='hm@utd.com',
             password='13',
             first_name='Hannibal',
             last_name='Mejbri'
