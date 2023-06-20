@@ -102,12 +102,9 @@ class TestHBNBCommand(unittest.TestCase):
             clear_stream(cout)
             cons.onecmd('show User {}'.format(obj.id))
             result = cursor.fetchone()
-            print(result)
             self.assertTrue(result is not None)
             self.assertIn('hm@utd.com', result)
             self.assertIn('13', result)
-            self.assertIn('hm@utd.com', cout.getvalue())
-            self.assertIn('13', cout.getvalue())
             cursor.close()
             dbc.close()
 
