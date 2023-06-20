@@ -2,6 +2,7 @@
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float
+from models.review import Review
 from os import getenv
 
 
@@ -32,3 +33,14 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
+
+    @property
+    def reviews(self):
+        """returns list of review instances with place_id"""
+        from models import storage
+        all_reviews = storage.all(Review)
+        r_list = []
+        for review in all_reviews.values():
+            if review.place_id == self.id:
+                r_list.append(review)
+                return r_list
