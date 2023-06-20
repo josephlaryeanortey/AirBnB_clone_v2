@@ -12,7 +12,7 @@ from models.user import User
 from models.city import City
 from os import getenv
 
-classes = {"User": User, "State": State, "City": City}
+classes = {"State": State, "City": City}
 
 
 class DBStorage:
@@ -47,6 +47,7 @@ class DBStorage:
             for obj in objs:
                 key = obj.__class__.__name__ + "." + obj.id
                 dictionary[key] = obj
+        return dictionary
 
     def new(self, obj):
         """function that adds object to database"""
@@ -66,12 +67,12 @@ class DBStorage:
     def delete(self, obj=None):
         """delete from the current database session"""
         if obj is not None:
-            self.__session.query(type(obj)).filter(type(obj).id == obj.id)
-            .delete()
+            self.__session.query(type(obj)).filter(
+                type(obj).id == obj.id).delete()
 
     def reload(self):
         """function that create all tables in the database"""
-        Base.metadata.create_all(engine)
+        Base.metadata.create_all(self.__engine)
         se_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(se_factory)()
 
