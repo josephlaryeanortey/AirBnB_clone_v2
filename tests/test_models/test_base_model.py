@@ -62,13 +62,8 @@ class test_basemodel(unittest.TestCase):
     def test_str(self):
         """ testing the str method of themodel"""
         var = self.value()
-        expected_output = "[{}] ({}) {}".format(
-                var.__class__.__name__,
-                var.id,
-                {key: value for key, value in var.__dict__.items()
-                    if key != '_sa_instance_state'})
-        actual_output = str(var)
-        self.assertEqual(actual_output, expected_output)
+        self.assertEqual(str(var), '[{}] ({}) {}'.format(self.name, var.id,
+                         var.__dict__))
 
     def test_todict(self):
         """ testing the to_dict method"""
