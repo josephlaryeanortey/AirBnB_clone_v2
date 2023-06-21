@@ -12,12 +12,8 @@ from models.review import Review
 from models.amenity import Amenity
 from os import getenv
 
-if getenv('HBNB_TYPE_STORAGE') == 'db':
-    from models.place import place_amenity
-
 classes = {"State": State, "City": City, "User": User,
-           "Place": Place, "Review": Review, "Amenity": Amenity,
-           "place_amenity": place_amenity}
+           "Place": Place, "Review": Review, "Amenity": Amenity}
 
 
 class DBStorage:
