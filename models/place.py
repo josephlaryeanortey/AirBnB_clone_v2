@@ -32,7 +32,8 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, default=0, nullable=False)
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
-        amenity_ids = []
+        reviews = relationship('Review', backref='place',
+                               cascade='all, delete, delete-orphan')
         amenities = relationship('Amenity', secondary=place_amenity,
                                  viewonly=False, backref='place_amenities')
     else:
@@ -48,32 +49,32 @@ class Place(BaseModel, Base):
         longitude = 0.0
         amenity_ids = []
 
-    @property
-    def reviews(self):
-        """returns list of review instances with place_id"""
-        from models import storage
-        all_reviews = storage.all(Review)
-        r_list = []
-        for review in all_reviews.values():
-            if review.place_id == self.id:
-                r_list.append(review)
-                return r_list
+        @property
+        def reviews(self):
+            """returns list of review instances with place_id"""
+            from models import storage
+            all_reviews = storage.all(Review)
+            r_list = []
+            for review in all_reviews.values():
+                if review.place_id == self.id:
+                    r_list.append(review)
+            return r_list
 
-    @property
-    def amenities(self):
-        """returns the list of Amenity instances"""
-        from models import storage
-        all_amenities = storage.all(Amenity)
-        a_list = []
-        for amenity in all_amenities.values():
-            if amenity.id in self.amenity_ids:
-                a_list.append(amenity)
-        return a_list
+        @property
+        def amenities(self):
+            """returns the list of Amenity instances"""
+            from models import storage
+            all_amenities = storage.all(Amenity)
+            a_list = []
+            for amenity in all_amenities.values():
+                if amenity.id in self.amenity_ids:
+                    a_list.append(amenity)
+            return a_list
 
-    @amenities.setter
-    def amenities(self, obj):
-        """method for adding an Amenity.id to the"""
-        if obj is not None:
-            if isinstance(obj, Amenity):
-                if obj.id not in self.amenity_ids:
-                    self.amenity_ids.append(obj.id)
+        @amenities.setter
+        def amenities(self, obj):
+            """method for adding an Amenity.id to the"""
+            if obj is not None:
+                if isinstance(obj, Amenity):
+                    if obj.id not in self.amenity_ids:
+                        self.amenity_ids.append(obj.id)

@@ -12,6 +12,9 @@ from models.review import Review
 from models.amenity import Amenity
 from os import getenv
 
+if getenv('HBNB_TYPE_STORAGE') == 'db':
+    from models.place import place_amenity
+
 classes = {"State": State, "City": City, "User": User,
            "Place": Place, "Review": Review, "Amenity": Amenity}
 
@@ -41,12 +44,12 @@ class DBStorage:
             for elem in classes.values():
                 objs = self.__session.query(elem).all()
                 for obj in objs:
-                    key = obj.__class__.__name__ + "." + obj.id
+                    key = obj.__class__.__name__ + '.' + obj.id
                     dictionary[key] = obj
         else:
             objs = self.__session.query(cls).all()
             for obj in objs:
-                key = obj.__class__.__name__ + "." + obj.id
+                key = obj.__class__.__name__ + '.' + obj.id
                 dictionary[key] = obj
         return dictionary
 
