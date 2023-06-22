@@ -142,3 +142,5 @@ Usage: <class_name>.update(<_id>, <dictionary>)
 <br>
 
 <center> <h2> DBStorage</h2> </center>
+
+![daaef631636b40e0a279a8f240703e065f9d3481](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/1b524a18-7ca7-4330-aa13-0343998a82ec)
