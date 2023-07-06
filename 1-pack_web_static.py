@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """Python module to compress all web static files"""
-from fabric.context_managers import settings
 from fabric.api import local
 from time import strftime
 import os
