@@ -18,7 +18,8 @@ def do_pack():
     except OSError:
         return None
 
-    result = local("tar -czvf versions/web_static_{}.tgz web_static".format(name))
+    result = local("tar -czvf versions/web_static_{}.tgz web_static"
+                   .format(name))
     archive_size = os.path.getsize(archive_path)
     print("web_static packed: {} -> {}Bytes".format(archive_path,
           archive_size))
