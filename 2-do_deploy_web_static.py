@@ -7,26 +7,24 @@ env.hosts = ['3.90.70.66', '100.26.231.45']
 
 
 def do_deploy(archive_path):
-    """Function to distribute an archive to web servers"""
+    """Deploy archive to web server"""
+    if path.isfile(archive_path) is False:
+        return False
     try:
-        if not (path.exists(archive_path)):
-            return False
+        f_name = archive_path.split("/")[-1]
+        no_ext = f_name.split(".")[0]
+        path_no_ext = "/data/web_static/releases/{}/".format(no_ext)
+        symlink = "/data/web_static/current"
 
-        name = archive_path[-18:-4]
+        put(archive_path, "/tmp/")
+        run("mkdir -p {}".format(path_no_ext))
+        run("tar -xzf /tmp/{} -C {}".format(f_name, path_no_ext))
+        run("rm /tmp/{}".format(f_name))
+        run("mv {}web_static/* {}".format(path_no_ext, path_no_ext))
+        run("rm -rf {}web_static".format(path_no_ext))
+        run("rm -rf {}".format(symlink))
+        run("ln -s {} {}".format(path_no_ext, symlink))
 
-        put(archive_path, '/tmp/')
-        run("sudo mkdir -p /data/web_static/releases/web_static_{}/\
-                ".format(name))
-        run("sudo tar -xzf /tmp/web_static_{}.tgz -C \
-                /data/web_static/releases/web_static_{}/".format(name, name))
-        run("sudo rm /tmp/web_static_{}.tgz".format(name))
-        run("sudo mv /data/web_static/releases/web_static_{}/web_static/* \
-                /data/web_static/releases/web_static_{}/".format(name, name))
-        run("sudo rm -rf /data/web_static/releases/\
-                web_static_{}/web_static".format(name))
-        run("sudo rm -rf /data/web_static/current")
-        run("sudo ln -s /data/web_static/releases/\
-                web_static_{}/ /data/web_static/current".format(name))
+        return True
     except Exception:
         return False
-    return True
