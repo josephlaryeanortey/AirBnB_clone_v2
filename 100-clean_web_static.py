@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """A module that deletes old archives"""
-from fabric.api import *
+from fabric.api import env, lcd, local, cd, run
 import os
 
 env.hosts = ['3.90.70.66', '100.26.231.45']
