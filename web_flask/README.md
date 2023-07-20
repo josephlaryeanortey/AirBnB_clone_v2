@@ -1,4 +1,4 @@
-![hbnb_step3](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/6c82b0ae-ecb9-43f4-a9f3-1e78d0758d84)# 0x04. AirBnB clone - Web framework
+# 0x04. AirBnB clone - Web framework
 ### `Python` `Back-end` `Webserver` `Flask`
 ## Resources
 **Read or watch**:
