@@ -463,3 +463,6 @@ guillaume@ubuntu:~$ curl 0.0.0.0:5000/states_list ; echo ""
 guillaume@ubuntu:~$
 ```
 
+[9. Cities by states](./8-cities_by_states.py)
+
+
