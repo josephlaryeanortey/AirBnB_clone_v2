@@ -25,7 +25,6 @@ def states_state(id=""):
     states = sorted(states, key=lambda k: k.name)
     fnd = 0
     state = ""
-    cities = []
     for s in states:
         if id == s.id:
             state = s
