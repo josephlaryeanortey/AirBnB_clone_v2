@@ -9,14 +9,14 @@
 		<H3>Cities:</H3>
 		<UL>
 			{% for city in arr %}
-			<LI>{{ city.id }}: <B>{{ city.name }}</B></LI>
+				<LI>{{ city.id }}: <B>{{ city.name }}</B></LI>
 			{% endfor %}
 		</UL>
 		{% elif fnd == 0 %}
 		<H1>States</H1>
 		<UL>
 			{% for state in arr %}
-			<LI>{{ state.id }}: <B>{{ state.name }}</B></LI>
+				<LI>{{ state.id }}: <B>{{ state.name }}</B></LI>
 			{% endfor %}
 		</UL>
 		{% else %}
