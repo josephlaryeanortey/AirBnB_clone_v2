@@ -656,6 +656,7 @@ guillaume@ubuntu:~$ curl 0.0.0.0:5000/cities_by_states ; echo ""
 guillaume@ubuntu:~$
 ```
 
+![9a7ae8155274b17881442200437e8793cf08de48](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/f7eaf17e-a244-4887-8f68-39b9cd73aa21)
 
 
 
