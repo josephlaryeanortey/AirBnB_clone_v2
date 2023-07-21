@@ -8,7 +8,7 @@ from models.state import State
 from models import storage
 
 
-app = Flask("__name__")
+app = Flask(__name__)
 
 
 @app.teardown_appcontext
@@ -37,4 +37,4 @@ def cities_by_states():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=None)
+    app.run(host="0.0.0.0", port=5000)
