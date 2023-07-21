@@ -5,7 +5,7 @@ listening on 0.0.0.0, port 5000
 """
 from flask import Flask, render_template
 
-app = Flask("__name__")
+app = Flask(__name__)
 
 
 @app.route('/', strict_slashes=False)
@@ -50,8 +50,9 @@ def number_template(n):
 @app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
 def number_odd_or_even(n):
     """Function that displays an HTML page only if n is an int(even/odd)"""
-    return (render_template("6-number_odd_or_even.html", value=n))
+    if isinstance(n, int):
+        return (render_template("6-number_odd_or_even.html", value=n))
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=None)
+    app.run(host="0.0.0.0", port=5000)
