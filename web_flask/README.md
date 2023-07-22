@@ -817,6 +817,16 @@ guillaume@ubuntu:~/AirBnB_v2$ HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_p
 * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ....
 ```
+In the browser:
+
+![4f993ec8ca2a2f639a80887667106ac63a0a3701](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/93d07e76-6bb7-454c-b606-0610942b677a)
+
+![1549b553d726cc37f64440be910cb6b858aa32ae](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/8108f9ad-7dc6-4bb5-be23-d1db96028045)
+
+![94b3a416ba1551c59701eb6672ac0a36fbebba14](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/abe63cc0-5d0d-42b8-8c44-15c071514d08)
+
+![1e559707dd34a37564dc10e54b707815a516d363](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/db7f53b8-4eb1-427a-a033-3286584002ed)
+
 
 [12. HBNB is alive!](./100-hbnb.py)
 
@@ -853,3 +863,15 @@ guillaume@ubuntu:~/AirBnB_v2$ HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_p
 * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ....
 ```
+In the browser:
+
+![396ae10c9f85a6128ae40e1b63f4bce95adf411c](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/84d969ed-a37d-4ee5-ad20-e32163c5343e)
+
+![9eb21499b5f3b59751fdbf561174e2f259d97482](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/861237e5-1d0e-4026-8417-a68d09c18b26)
+
+![bf248a63c15a746ad694acffdd56d80281782c71](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/eb627d29-4928-431c-b9b1-d121a6e37085)
+
+![494317aad058a649a51f416eceee1a609f07c6c0](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/500c8ff0-8779-470b-93fe-a0d3c293139c)
+
+![016911388aa92532e06c4d5361188a2622425517](https://github.com/samuelselasi/AirBnB_clone_v2/assets/85158665/c4b29309-1065-4407-9f5d-d6d36762ca7a)
+
